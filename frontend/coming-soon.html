@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coming Soon Bikes — MotoElite Premium Showroom</title>
+  <meta name="description" content="Get a sneak peek at upcoming motorcycle launches at MotoElite. Register your interest and be the first to know." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/bikes.css" />
+  <style>
+    /* ── Coming Soon Specific ──────────────────────────────── */
+    .coming-soon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: var(--spacing-xl);
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .cs-card {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      transition: all var(--transition-base);
+      position: relative;
+    }
+
+    .cs-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 212, 255, 0.25);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .cs-card-image {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0a0a1a, #0d1035);
+    }
+
+    .cs-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+      filter: brightness(0.7) saturate(0.8);
+    }
+
+    .cs-card:hover .cs-card-image img {
+      transform: scale(1.05);
+      filter: brightness(0.85) saturate(1);
+    }
+
+    .cs-card-image-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(8,8,20,0.95) 0%, transparent 60%);
+    }
+
+    .cs-ribbon {
+      position: absolute;
+      top: 16px;
+      right: -6px;
+      background: var(--gradient-gold);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 16px 5px 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%);
+      box-shadow: 0 4px 15px rgba(255, 200, 0, 0.3);
+    }
+
+    .cs-launch-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .cs-card-body {
+      padding: var(--spacing-lg);
+    }
+
+    .cs-card-brand {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 0.4rem;
+    }
+
+    .cs-card-name {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .cs-card-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .cs-card-specs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .cs-spec-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .cs-spec-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cs-spec-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 2px;
+    }
+
+    /* Countdown */
+    .cs-countdown {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin: var(--spacing-md) 0;
+      padding: var(--spacing-md);
+      background: rgba(0, 212, 255, 0.04);
+      border: 1px solid rgba(0, 212, 255, 0.1);
+      border-radius: var(--radius-md);
+    }
+
+    .cs-countdown-unit {
+      text-align: center;
+    }
+
+    .cs-countdown-num {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--accent-blue);
+      line-height: 1;
+      display: block;
+    }
+
+    .cs-countdown-label {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Notify form */
+    .notify-section {
+      background: linear-gradient(135deg, var(--glass-bg), rgba(0,212,255,0.04));
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notify-section::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .notify-form {
+      display: flex;
+      gap: var(--spacing-md);
+      max-width: 500px;
+      margin: var(--spacing-xl) auto 0;
+    }
+
+    .notify-form .form-control {
+      flex: 1;
+    }
+
+    @media (max-width: 540px) {
+      .coming-soon-grid {
+        grid-template-columns: 1fr;
+      }
+      .notify-form {
+        flex-direction: column;
+      }
+      .cs-countdown-num {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────────── -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏍️</div>
+      <div>
+        <span class="nav-logo-text">MotoElite</span>
+        <span class="nav-logo-sub">Premium Showroom</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="bikes.html">Available Bikes</a></li>
+      <li><a href="coming-soon.html" class="active">Coming Soon</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="booking.html">Bike Booking</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="booking.html" class="nav-book-btn">Book Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── Page Hero ────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="grid-dots"></div>
+  <div class="container">
+    <div class="section-tag">🔮 Upcoming Launches</div>
+    <h1 class="page-hero-title">Coming <span class="text-gradient">Soon</span></h1>
+    <p class="page-hero-subtitle">The next generation of superbikes is almost here. Sneak peek at what's arriving at MotoElite.</p>
+  </div>
+</div>
+
+<!-- ─── Main Content ─────────────────────────────────────────── -->
+<main class="section page-content">
+  <div class="container">
+
+    <!-- Coming Soon Grid -->
+    <div class="coming-soon-grid" id="coming-soon-grid">
+      <!-- Loaded by JS -->
+      <div style="grid-column:1/-1;display:flex;justify-content:center;padding:4rem;">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- Notify Me Section -->
+    <div class="notify-section reveal">
+      <div class="section-tag" style="margin-bottom:1rem;">🔔 Stay Informed</div>
+      <h2 style="font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:0.75rem;">
+        Be The <span class="text-gradient">First To Know</span>
+      </h2>
+      <p style="color:var(--text-secondary);max-width:520px;margin:0 auto;line-height:1.8;">
+        Register your email and get exclusive early access, launch-day pricing, and priority booking for every new arrival at MotoElite.
+      </p>
+
+      <form class="notify-form" id="notify-form" novalidate>
+        <input
+          type="email"
+          id="notify-email"
+          class="form-control"
+          placeholder="Enter your email address"
+          required
+        />
+        <button type="submit" class="btn btn-primary" id="notify-btn">
+          🔔 Notify Me
+        </button>
+      </form>
+
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:1rem;">
+        No spam ever. Unsubscribe anytime. 🔒 Your email is safe with us.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2024 MotoElite Premium Showroom. All rights reserved.</span>
+      <a href="admin/login.html" style="color:var(--text-muted);font-size:0.8rem;">Admin Portal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+/* ─── Coming Soon Page Logic ─────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadComingSoonBikes();
+  setupNotifyForm();
+  initScrollReveal();
+});
+
+async function loadComingSoonBikes() {
+  const grid = document.getElementById('coming-soon-grid');
+
+  try {
+    const data = await apiGet('/bikes?comingSoon=true&limit=12&page=1');
+    const bikes = data.bikes || [];
+
+    if (!bikes.length) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-icon">🔮</div>
+          <h3>Nothing Announced Yet</h3>
+          <p>Check back soon — exciting launches are being planned. Register below to be notified!</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = bikes.map((bike, i) => renderComingSoonCard(bike, i)).join('');
+
+    // Start countdowns for each card
+    bikes.forEach(bike => {
+      if (bike.expectedLaunch) {
+        startCountdown(bike._id, bike.expectedLaunch);
+      }
+    });
+
+  } catch (err) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;">
+        <div class="empty-state-icon">⚠️</div>
+        <h3>Unable to Load</h3>
+        <p>Make sure the backend server is running on port 5000.</p>
+        <a href="bikes.html" class="btn btn-secondary" style="margin-top:1rem;">Browse Available Bikes</a>
+      </div>
+    `;
+  }
+}
+
+function renderComingSoonCard(bike, index) {
+  const specs = bike.specifications || {};
+  const launchDate = bike.expectedLaunch
+    ? new Date(bike.expectedLaunch).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    : 'TBA';
+
+  const specItems = [
+    specs.engine ? { label: 'Engine', value: specs.engine } : null,
+    specs.power ? { label: 'Power', value: specs.power } : null,
+    specs.topSpeed ? { label: 'Top Speed', value: specs.topSpeed } : null,
+    bike.engineCapacity ? { label: 'Displacement', value: bike.engineCapacity } : null,
+  ].filter(Boolean).slice(0, 4);
+
+  const delayClass = `reveal reveal-delay-${(index % 6) + 1}`;
+
+  return `
+    <div class="cs-card ${delayClass}">
+      <div class="cs-card-image">
+        <img
+          src="${bikeImgUrl(bike.image)}"
+          alt="${bike.brand} ${bike.modelName}"
+          onerror="this.src='images/bike-placeholder.jpg'"
+          loading="lazy"
+        />
+        <div class="cs-card-image-overlay"></div>
+        <div class="cs-ribbon">Coming Soon</div>
+        <div class="cs-launch-badge">🗓️ ${launchDate}</div>
+      </div>
+
+      <div class="cs-card-body">
+        <div class="cs-card-brand">${bike.brand}</div>
+        <h2 class="cs-card-name">${bike.modelName}</h2>
+
+        ${bike.description ? `<p class="cs-card-desc">${bike.description.substring(0, 120)}${bike.description.length > 120 ? '...' : ''}</p>` : ''}
+
+        ${specItems.length ? `
+        <div class="cs-card-specs">
+          ${specItems.map(s => `
+            <div class="cs-spec-item">
+              <div class="cs-spec-label">${s.label}</div>
+              <div class="cs-spec-value">${s.value}</div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+
+        ${bike.expectedLaunch ? `
+        <div class="cs-countdown" id="countdown-${bike._id}">
+          <div class="cs-countdown-unit">
+            <span class="cs-countdown-num" id="days-${bike._id}">--</span>
+            <div class="cs-countdown-label">Days</div>
+          </div>
+          <div class="cs-countdown-unit">
+            <span class="cs-countdown-num" id="hours-${bike._id}">--</span>
+            <div class="cs-countdown-label">Hours</div>
+          </div>
+          <div class="cs-countdown-unit">
+            <span class="cs-countdown-num" id="mins-${bike._id}">--</span>
+            <div class="cs-countdown-label">Mins</div>
+          </div>
+          <div class="cs-countdown-unit">
+            <span class="cs-countdown-num" id="secs-${bike._id}">--</span>
+            <div class="cs-countdown-label">Secs</div>
+          </div>
+        </div>` : ''}
+
+        <div style="display:flex;gap:0.6rem;margin-top:var(--spacing-md);">
+          ${bike.price ? `
+          <div style="flex:1;background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.15);border-radius:var(--radius-sm);padding:0.6rem;text-align:center;">
+            <div style="font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Expected Price</div>
+            <div style="font-size:1rem;font-weight:700;color:var(--accent-gold);">${formatPrice(bike.price)}</div>
+          </div>` : ''}
+          <button
+            class="btn btn-primary btn-sm"
+            style="flex:1;"
+            onclick="notifyForBike('${bike._id}', '${bike.brand} ${bike.modelName}')"
+            id="notify-bike-${bike._id}"
+          >
+            🔔 Notify Me
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ─── Countdown Timer ───────────────────────────────────────── */
+function startCountdown(bikeId, launchDateStr) {
+  const target = new Date(launchDateStr).getTime();
+
+  function tick() {
+    const now = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      const el = document.getElementById(`countdown-${bikeId}`);
+      if (el) el.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--accent-green);font-weight:700;">🚀 Launched!</div>';
+      return;
+    }
+
+    const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val).padStart(2, '0');
+    };
+
+    set(`days-${bikeId}`, days);
+    set(`hours-${bikeId}`, hours);
+    set(`mins-${bikeId}`, mins);
+    set(`secs-${bikeId}`, secs);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ─── Notify for a specific bike ────────────────────────────── */
+function notifyForBike(bikeId, bikeName) {
+  const email = prompt(`Enter your email to be notified when ${bikeName} launches:`);
+  if (!email) return;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid email address.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById(`notify-bike-${bikeId}`);
+  if (btn) {
+    btn.innerHTML = '✅ Registered!';
+    btn.disabled = true;
+    btn.style.background = 'rgba(0,212,120,0.15)';
+    btn.style.border = '1px solid rgba(0,212,120,0.3)';
+    btn.style.color = '#00d478';
+  }
+
+  showToast(`You'll be notified at ${email} when this bike launches! 🚀`, 'success');
+}
+
+/* ─── Global Notify Form ─────────────────────────────────────── */
+function setupNotifyForm() {
+  const form = document.getElementById('notify-form');
+  const btn  = document.getElementById('notify-btn');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('notify-email').value.trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '✅ You\'re on the list!';
+
+    showToast(`${email} registered for launch notifications. We'll reach out first! 🎯`, 'success', 5000);
+
+    setTimeout(() => {
+      form.reset();
+      btn.disabled = false;
+      btn.innerHTML = '🔔 Notify Me';
+    }, 4000);
+  });
+}
+</script>
+</body>
+</html>

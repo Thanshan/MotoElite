@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Bikes — MotoElite Premium Showroom</title>
+  <meta name="description" content="Browse our complete collection of premium motorcycles. Filter by brand, category, and price. Find your perfect ride." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/bikes.css" />
+</head>
+<body>
+<!-- ─── Navbar ──────────────────────────────────────────────── -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏍️</div>
+      <div>
+        <span class="nav-logo-text">MotoElite</span>
+        <span class="nav-logo-sub">Premium Showroom</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="bikes.html" class="active">Available Bikes</a></li>
+      <li><a href="coming-soon.html">Coming Soon</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="booking.html">Bike Booking</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="booking.html" class="nav-book-btn">Book Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── Page Hero ────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="grid-dots"></div>
+  <div class="container">
+    <div class="section-tag">🏍️ Our Collection</div>
+    <h1 class="page-hero-title">Available <span class="text-gradient">Motorcycles</span></h1>
+    <p class="page-hero-subtitle">Explore our handpicked collection of premium bikes from the world's finest brands</p>
+  </div>
+</div>
+
+<!-- ─── Main Content ─────────────────────────────────────────── -->
+<main class="section page-content">
+  <div class="container">
+    <!-- Filters -->
+    <div class="filters-bar">
+      <div class="search-box">
+        <span class="search-box-icon">🔍</span>
+        <input type="text" id="search-input" class="form-control" placeholder="Search by model or brand..." />
+      </div>
+      <select id="brand-filter" class="form-control filter-select">
+        <option value="">All Brands</option>
+      </select>
+      <select id="category-filter" class="form-control filter-select">
+        <option value="">All Categories</option>
+        <option value="Sport">Sport</option>
+        <option value="Naked">Naked</option>
+        <option value="Cruiser">Cruiser</option>
+        <option value="Adventure">Adventure</option>
+        <option value="Touring">Touring</option>
+        <option value="Scooter">Scooter</option>
+      </select>
+      <select id="availability-filter" class="form-control filter-select">
+        <option value="">All Status</option>
+        <option value="true">Available</option>
+        <option value="false">Sold Out</option>
+      </select>
+      <button id="reset-filters" class="btn btn-secondary btn-sm">Reset</button>
+      <span class="filter-results" id="filter-results">Loading...</span>
+    </div>
+
+    <!-- Bikes Grid -->
+    <div class="bikes-grid" id="bikes-grid">
+      <!-- Loaded by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+  </div>
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2024 MotoElite Premium Showroom. All rights reserved.</span>
+      <a href="admin/login.html" style="color:var(--text-muted);font-size:0.8rem;">Admin Portal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/bikes.js"></script>
+</body>
+</html>

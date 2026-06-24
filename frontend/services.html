@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — MotoElite Premium Showroom</title>
+  <meta name="description" content="Professional motorcycle servicing, repairs, and maintenance by certified technicians at MotoElite." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/bikes.css" />
+</head>
+<body>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏍️</div>
+      <div><span class="nav-logo-text">MotoElite</span><span class="nav-logo-sub">Premium Showroom</span></div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="bikes.html">Available Bikes</a></li>
+      <li><a href="coming-soon.html">Coming Soon</a></li>
+      <li><a href="services.html" class="active">Services</a></li>
+      <li><a href="booking.html">Bike Booking</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-cta"><a href="booking.html" class="nav-book-btn">Book Now</a></div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="grid-dots"></div>
+  <div class="container">
+    <div class="section-tag">🔧 Expert Care</div>
+    <h1 class="page-hero-title">Our <span class="text-gradient">Services</span></h1>
+    <p class="page-hero-subtitle">Professional motorcycle maintenance and repair by certified technicians</p>
+  </div>
+</div>
+
+<main class="section page-content">
+  <div class="container">
+    <!-- Services Grid -->
+    <div class="services-grid" id="services-grid">
+      <div style="grid-column:1/-1;display:flex;justify-content:center;padding:3rem;">
+        <div class="spinner"></div>
+      </div>
+    </div>
+
+    <!-- Service Request Form -->
+    <div style="margin-top:4rem;">
+      <div class="section-header">
+        <div class="section-tag">📋 Schedule Service</div>
+        <h2 class="section-title">Request a <span>Service</span></h2>
+        <p class="section-subtitle">Book your service appointment online. We'll confirm within 24 hours.</p>
+      </div>
+
+      <div style="max-width:700px;margin:0 auto;">
+        <div class="booking-form-card">
+          <form id="service-form">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="svc-name">Full Name *</label>
+                <input type="text" id="svc-name" class="form-control" placeholder="Your name" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="svc-phone">Phone Number *</label>
+                <input type="tel" id="svc-phone" class="form-control" placeholder="+94 76 276 6362" required />
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="svc-type">Service Type *</label>
+                <select id="svc-type" class="form-control" required>
+                  <option value="">Select a service</option>
+                  <option>General Service</option>
+                  <option>Oil Change</option>
+                  <option>Engine Repair</option>
+                  <option>Brake Service</option>
+                  <option>Electrical Repair</option>
+                  <option>Full Inspection</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="svc-date">Preferred Date *</label>
+                <input type="date" id="svc-date" class="form-control" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="svc-bike">Your Bike Model</label>
+              <input type="text" id="svc-bike" class="form-control" placeholder="e.g. Honda CBR650R (2023)" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="svc-notes">Issue Description</label>
+              <textarea id="svc-notes" class="form-control" rows="3" placeholder="Describe the issue or service needed..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" id="svc-submit" style="width:100%;justify-content:center;">
+              🔧 Request Service Appointment
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/main.js"></script>
+<script>
+const serviceIcons = { wrench:'🔧', droplet:'💧', settings:'⚙️', disc:'💿', zap:'⚡', search:'🔍' };
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Set min date
+  const d = new Date(); d.setDate(d.getDate()+1);
+  document.getElementById('svc-date').min = d.toISOString().split('T')[0];
+
+  try {
+    const data = await apiGet('/services');
+    renderServices(data.services);
+  } catch(e) {
+    document.getElementById('services-grid').innerHTML =
+      '<p class="text-center text-muted" style="grid-column:1/-1;">Unable to load services. Start the backend server.</p>';
+  }
+
+  document.getElementById('service-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('svc-submit');
+    btn.disabled = true;
+    btn.innerHTML = '✅ Request Submitted!';
+    showToast('Service appointment request received! We will contact you shortly.', 'success');
+    setTimeout(() => {
+      e.target.reset();
+      btn.disabled = false;
+      btn.innerHTML = '🔧 Request Service Appointment';
+    }, 3000);
+  });
+});
+
+function renderServices(services) {
+  const grid = document.getElementById('services-grid');
+  if (!services.length) {
+    grid.innerHTML = '<p class="text-center text-muted" style="grid-column:1/-1;">No services available. Run the seeder!</p>';
+    return;
+  }
+  grid.innerHTML = services.map((s, i) => `
+    <div class="service-card reveal reveal-delay-${(i%6)+1}">
+      <div class="service-icon">${serviceIcons[s.icon] || '🔧'}</div>
+      <div class="service-name">${s.serviceName}</div>
+      <p class="service-description">${s.description}</p>
+      <div class="service-footer">
+        <div class="service-price">${formatPrice(s.price)}</div>
+        <div class="service-duration">⏱️ ${s.duration}</div>
+      </div>
+    </div>
+  `).join('');
+  initScrollReveal();
+}
+</script>
+</body>
+</html>

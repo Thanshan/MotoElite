@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — MotoElite Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* ── Dashboard Charts / Extras ──────────────────────────── */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-xl);
+    }
+
+    .recent-activity-card {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .activity-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-lg);
+      border-bottom: var(--border-glass);
+    }
+
+    .activity-header h3 {
+      font-size: 1rem;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background var(--transition-fast);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-item:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .activity-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--bg-primary);
+      flex-shrink: 0;
+    }
+
+    .activity-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .activity-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .activity-status {
+      flex-shrink: 0;
+    }
+
+    /* Quick Actions */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .quick-action-btn {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: all var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .quick-action-btn:hover {
+      border-color: rgba(0, 212, 255, 0.25);
+      background: rgba(0, 212, 255, 0.05);
+      transform: translateY(-2px);
+      color: var(--accent-blue);
+    }
+
+    .quick-action-icon {
+      font-size: 1.6rem;
+    }
+
+    .quick-action-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Revenue card */
+    .revenue-bar-wrap {
+      margin-top: var(--spacing-sm);
+    }
+
+    .revenue-bar-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: 0.6rem;
+    }
+
+    .revenue-bar-label {
+      width: 70px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .revenue-bar-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .revenue-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: var(--gradient-blue);
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0;
+    }
+
+    .revenue-bar-val {
+      width: 50px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: right;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .quick-actions-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon">🏍️</div>
+      <div>
+        <div class="sidebar-title">MotoElite</div>
+        <div class="sidebar-subtitle">Admin Panel</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-title">Main</div>
+      <a href="dashboard.html" class="sidebar-link" id="nav-dashboard">
+        <span class="sidebar-link-icon">📊</span> Dashboard
+      </a>
+
+      <div class="sidebar-section-title">Inventory</div>
+      <a href="bikes.html" class="sidebar-link" id="nav-bikes">
+        <span class="sidebar-link-icon">🏍️</span> Manage Bikes
+      </a>
+
+      <div class="sidebar-section-title">Operations</div>
+      <a href="bookings.html" class="sidebar-link" id="nav-bookings">
+        <span class="sidebar-link-icon">📅</span> Bookings
+        <span class="sidebar-badge" id="pending-badge">0</span>
+      </a>
+      <a href="services.html" class="sidebar-link" id="nav-services">
+        <span class="sidebar-link-icon">🔧</span> Services
+      </a>
+      <a href="contacts.html" class="sidebar-link" id="nav-contacts">
+        <span class="sidebar-link-icon">📬</span> Messages
+        <span class="sidebar-badge" id="unread-badge">0</span>
+      </a>
+
+      <div class="sidebar-section-title">Store</div>
+      <a href="../index.html" class="sidebar-link" target="_blank">
+        <span class="sidebar-link-icon">🌐</span> View Website
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+        <div>
+          <div style="font-size:0.875rem;font-weight:600;" id="sidebar-username">Admin</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);" id="sidebar-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="sidebar-logout-btn" style="width:100%;justify-content:center;">
+        🚪 Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ─────────────────────────────────────── -->
+  <main class="admin-main">
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <button class="btn btn-secondary btn-sm" id="sidebar-toggle-btn" style="display:none;">☰</button>
+      <div class="admin-topbar-title">📊 Dashboard Overview</div>
+      <div style="font-size:0.85rem;color:var(--text-muted);" id="topbar-date"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="admin-content">
+
+      <!-- Stats Grid -->
+      <div class="admin-stats-grid" id="stats-grid">
+        <!-- loaded by JS -->
+        <div class="admin-stat-card"><div class="spinner" style="margin:auto;"></div></div>
+        <div class="admin-stat-card"><div class="spinner" style="margin:auto;"></div></div>
+        <div class="admin-stat-card"><div class="spinner" style="margin:auto;"></div></div>
+        <div class="admin-stat-card"><div class="spinner" style="margin:auto;"></div></div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="admin-table-card" style="margin-bottom:var(--spacing-xl);padding:var(--spacing-lg);">
+        <h3 style="margin-bottom:var(--spacing-md);font-size:1rem;">⚡ Quick Actions</h3>
+        <div class="quick-actions-grid">
+          <a href="bikes.html" class="quick-action-btn" id="qa-add-bike">
+            <span class="quick-action-icon">➕</span>
+            <span class="quick-action-label">Add New Bike</span>
+          </a>
+          <a href="bookings.html" class="quick-action-btn" id="qa-view-bookings">
+            <span class="quick-action-icon">📅</span>
+            <span class="quick-action-label">View Bookings</span>
+          </a>
+          <a href="services.html" class="quick-action-btn" id="qa-add-service">
+            <span class="quick-action-icon">🔧</span>
+            <span class="quick-action-label">Manage Services</span>
+          </a>
+          <a href="../index.html" target="_blank" class="quick-action-btn" id="qa-view-site">
+            <span class="quick-action-icon">🌐</span>
+            <span class="quick-action-label">View Website</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid: Recent Bookings + Recent Bikes -->
+      <div class="dashboard-grid">
+
+        <!-- Recent Bookings -->
+        <div class="recent-activity-card">
+          <div class="activity-header">
+            <h3>📅 Recent Bookings</h3>
+            <a href="bookings.html" class="btn btn-secondary btn-sm" id="view-all-bookings-btn">View All</a>
+          </div>
+          <div id="recent-bookings-list">
+            <div style="padding:2rem;text-align:center;">
+              <div class="spinner" style="margin:auto;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Available Bikes + Category breakdown -->
+        <div style="display:flex;flex-direction:column;gap:var(--spacing-xl);">
+
+          <!-- Recent Bikes -->
+          <div class="recent-activity-card">
+            <div class="activity-header">
+              <h3>🏍️ Recent Bikes</h3>
+              <a href="bikes.html" class="btn btn-secondary btn-sm" id="view-all-bikes-btn">View All</a>
+            </div>
+            <div id="recent-bikes-list">
+              <div style="padding:2rem;text-align:center;">
+                <div class="spinner" style="margin:auto;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Distribution -->
+          <div class="admin-table-card" style="padding:var(--spacing-lg);">
+            <h3 style="font-size:1rem;margin-bottom:var(--spacing-md);">📈 Bikes by Category</h3>
+            <div class="revenue-bar-wrap" id="category-bars">
+              <div style="text-align:center;padding:1rem;">
+                <div class="spinner" style="margin:auto;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div>
+
+<script src="../js/admin.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  requireAuth();
+  initAdminSidebar();
+
+  // Date
+  document.getElementById('topbar-date').textContent =
+    new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  // Mobile sidebar toggle visibility
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar-toggle-btn').style.display = 'block';
+  }
+
+  await Promise.all([
+    loadStats(),
+    loadRecentBookings(),
+    loadRecentBikes(),
+  ]);
+});
+
+/* ─── Load Stats ─────────────────────────────────────────────── */
+async function loadStats() {
+  try {
+    const [bikesData, bookingsData, servicesData] = await Promise.all([
+      adminGet('/bikes?limit=1&page=1'),
+      adminGet('/bookings?limit=1&page=1'),
+      adminGet('/services'),
+    ]);
+
+    const totalBikes    = bikesData.total || 0;
+    const totalBookings = bookingsData.total || 0;
+    const totalServices = (servicesData.services || []).length;
+    const available     = (bikesData.bikes || []).filter ? bikesData.available || 0 : 0;
+
+    // Fetch full bikes list to compute available count
+    const allBikesData = await adminGet('/bikes?limit=200&page=1');
+    const allBikes     = allBikesData.bikes || [];
+    const availCount   = allBikes.filter(b => b.availability && !b.comingSoon).length;
+    const comingCount  = allBikes.filter(b => b.comingSoon).length;
+
+    // Pending bookings
+    const allBookingsData = await adminGet('/bookings?limit=200&page=1');
+    const allBookings     = allBookingsData.bookings || [];
+    const pendingCount    = allBookings.filter(b => b.status === 'pending').length;
+
+    document.getElementById('pending-badge').textContent = pendingCount;
+
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon blue">🏍️</div>
+        <div>
+          <div class="admin-stat-value">${allBikesData.total || 0}</div>
+          <div class="admin-stat-label">Total Bikes</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">${availCount} available · ${comingCount} coming soon</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon gold">📅</div>
+        <div>
+          <div class="admin-stat-value">${allBookingsData.total || 0}</div>
+          <div class="admin-stat-label">Total Bookings</div>
+          <div style="font-size:0.78rem;color:var(--accent-gold);margin-top:2px;">${pendingCount} pending review</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon green">🔧</div>
+        <div>
+          <div class="admin-stat-value">${totalServices}</div>
+          <div class="admin-stat-label">Active Services</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Service packages offered</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
+        <div class="admin-stat-icon red">✅</div>
+        <div>
+          <div class="admin-stat-value">${allBookings.filter(b => b.status === 'confirmed').length}</div>
+          <div class="admin-stat-label">Confirmed Bookings</div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">${allBookings.filter(b => b.status === 'completed').length} completed</div>
+        </div>
+      </div>
+    `;
+
+    // Category breakdown
+    buildCategoryBars(allBikes);
+
+  } catch (err) {
+    document.getElementById('stats-grid').innerHTML =
+      `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:2rem;">
+        ⚠️ Unable to load stats — make sure the backend is running.
+      </div>`;
+  }
+}
+
+/* ─── Build Category Bars ────────────────────────────────────── */
+function buildCategoryBars(bikes) {
+  const counts = {};
+  bikes.forEach(b => {
+    const cat = b.category || 'Other';
+    counts[cat] = (counts[cat] || 0) + 1;
+  });
+
+  const sorted  = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const max     = sorted[0]?.[1] || 1;
+  const colors  = ['var(--gradient-blue)', 'var(--gradient-gold)', 'linear-gradient(90deg,#a064ff,#6040ff)'];
+
+  document.getElementById('category-bars').innerHTML = sorted.length
+    ? sorted.map(([cat, count], i) => `
+        <div class="revenue-bar-row">
+          <div class="revenue-bar-label">${cat}</div>
+          <div class="revenue-bar-track">
+            <div class="revenue-bar-fill" data-width="${(count / max * 100).toFixed(0)}"
+                 style="background:${colors[i % colors.length]}"></div>
+          </div>
+          <div class="revenue-bar-val">${count}</div>
+        </div>
+      `).join('')
+    : '<p style="color:var(--text-muted);font-size:0.85rem;">No bike data.</p>';
+
+  // Animate bars
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.revenue-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width + '%';
+    });
+  });
+}
+
+/* ─── Recent Bookings ────────────────────────────────────────── */
+async function loadRecentBookings() {
+  const container = document.getElementById('recent-bookings-list');
+  try {
+    const data     = await adminGet('/bookings?limit=6&page=1');
+    const bookings = data.bookings || [];
+
+    if (!bookings.length) {
+      container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No bookings yet.</div>';
+      return;
+    }
+
+    container.innerHTML = bookings.map(b => `
+      <div class="activity-item">
+        <div class="activity-avatar">${(b.customerName || 'U').charAt(0).toUpperCase()}</div>
+        <div class="activity-info">
+          <div class="activity-name">${b.customerName}</div>
+          <div class="activity-sub">
+            ${b.bikeId?.brand || ''} ${b.bikeId?.modelName || 'Unknown Bike'} · ${formatDate(b.preferredDate)}
+          </div>
+        </div>
+        <div class="activity-status">${statusBadge(b.status)}</div>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">Unable to load bookings.</div>';
+  }
+}
+
+/* ─── Recent Bikes ───────────────────────────────────────────── */
+async function loadRecentBikes() {
+  const container = document.getElementById('recent-bikes-list');
+  try {
+    const data  = await adminGet('/bikes?limit=6&page=1');
+    const bikes = data.bikes || [];
+
+    if (!bikes.length) {
+      container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">No bikes yet.</div>';
+      return;
+    }
+
+    container.innerHTML = bikes.map(bike => `
+      <div class="activity-item">
+        <div style="width:48px;height:36px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#1a1a3a;">
+          <img src="${bikeImgUrl(bike.image)}" alt="${bike.modelName}"
+               onerror="this.src='../images/bike-placeholder.jpg'"
+               style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+        <div class="activity-info">
+          <div class="activity-name">${bike.brand} ${bike.modelName}</div>
+          <div class="activity-sub">${bike.category || 'Sport'} · ${formatPrice(bike.price)}</div>
+        </div>
+        <div class="activity-status">
+          <span class="badge ${bike.availability ? 'badge-available' : 'badge-unavailable'}">
+            ${bike.availability ? '● In Stock' : '● Sold Out'}
+          </span>
+        </div>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-muted);">Unable to load bikes.</div>';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — MotoElite Premium Showroom</title>
+  <meta name="description" content="Get in touch with MotoElite. Visit our showroom, call us, or send us a message. We're here to help you find your perfect motorcycle." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/bikes.css" />
+  <style>
+    /* ── Contact Page Specific ─────────────────────────────── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: var(--spacing-2xl);
+      align-items: start;
+    }
+
+    .contact-info-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .contact-info-card {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xl);
+      transition: all var(--transition-base);
+    }
+
+    .contact-info-card:hover {
+      border-color: rgba(0, 212, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .contact-info-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .contact-info-icon-wrap.blue {
+      background: rgba(0, 212, 255, 0.1);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .contact-info-icon-wrap.gold {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .contact-info-icon-wrap.green {
+      background: rgba(0, 212, 120, 0.1);
+      border: 1px solid rgba(0, 212, 120, 0.2);
+    }
+
+    .contact-info-icon-wrap.purple {
+      background: rgba(160, 100, 255, 0.1);
+      border: 1px solid rgba(160, 100, 255, 0.2);
+    }
+
+    .contact-info-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .contact-info-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .contact-info-sub {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* Hours Grid */
+    .hours-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: var(--spacing-sm);
+    }
+
+    .hours-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .hours-row:last-child {
+      border-bottom: none;
+    }
+
+    .hours-day {
+      color: var(--text-secondary);
+    }
+
+    .hours-time {
+      color: var(--accent-blue);
+      font-weight: 600;
+    }
+
+    .hours-closed {
+      color: var(--accent-red);
+    }
+
+    /* Map Placeholder */
+    .map-placeholder {
+      background: linear-gradient(135deg, #0a0a1a, #0d1035);
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .map-placeholder::before {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,212,255,0.1) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Social Links */
+    .social-links {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      width: 42px;
+      height: 42px;
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .social-link:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+      background: rgba(0, 212, 255, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Contact Form */
+    .contact-form-card {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-2xl);
+      backdrop-filter: var(--glass-blur);
+    }
+
+    .contact-form-header {
+      margin-bottom: var(--spacing-xl);
+      padding-bottom: var(--spacing-lg);
+      border-bottom: var(--border-glass);
+    }
+
+    /* Success State */
+    .contact-success {
+      display: none;
+      text-align: center;
+      padding: var(--spacing-2xl);
+    }
+
+    .contact-success-icon {
+      font-size: 4rem;
+      margin-bottom: var(--spacing-lg);
+      animation: bounceIn 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 1024px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hours-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── Navbar ──────────────────────────────────────────────── -->
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏍️</div>
+      <div>
+        <span class="nav-logo-text">MotoElite</span>
+        <span class="nav-logo-sub">Premium Showroom</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="bikes.html">Available Bikes</a></li>
+      <li><a href="coming-soon.html">Coming Soon</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="booking.html">Bike Booking</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="booking.html" class="nav-book-btn">Book Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── Page Hero ────────────────────────────────────────────── -->
+<div class="page-hero">
+  <div class="grid-dots"></div>
+  <div class="container">
+    <div class="section-tag">📬 Get In Touch</div>
+    <h1 class="page-hero-title">Contact <span class="text-gradient">Us</span></h1>
+    <p class="page-hero-subtitle">
+      Have a question about a bike, booking, or service? We'd love to hear from you.
+    </p>
+  </div>
+</div>
+
+<!-- ─── Main Content ─────────────────────────────────────────── -->
+<main class="section page-content">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- ── Left: Info Cards ─────────────────────────────── -->
+      <div class="contact-info-stack">
+
+        <!-- Location -->
+        <div class="contact-info-card reveal">
+          <div class="contact-info-icon-wrap blue">📍</div>
+          <div class="contact-info-label">Showroom Location</div>
+          <div class="contact-info-value">MotoElite Premium Showroom</div>
+          <div class="contact-info-sub">
+            No. 123,<br />
+            Point Pedro Road,<br />
+            Avarangal, Jaffna,<br />
+            Sri Lanka.
+          </div>
+          <div class="map-placeholder" style="margin-top:var(--spacing-md);">
+            <div style="position:relative;z-index:1;text-align:center;">
+              <div style="font-size:2.5rem;margin-bottom:0.5rem;">🗺️</div>
+              <div style="font-size:0.85rem;color:var(--text-muted);">MG Road, Bengaluru</div>
+              <a
+                href="https://maps.google.com/?q=MG+Road+Bengaluru"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-secondary btn-sm"
+                style="margin-top:0.75rem;"
+                id="open-maps-btn"
+              >Open in Google Maps →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone & Email -->
+        <div class="contact-info-card reveal reveal-delay-1">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-md);">
+            <div>
+              <div class="contact-info-icon-wrap green">📞</div>
+              <div class="contact-info-label">Call Us</div>
+              <a href="tel:+94762766362" class="contact-info-value" style="display:block;color:var(--accent-blue);text-decoration:none;">+94 76 276 6362</a>
+              <div class="contact-info-sub">Sales & Enquiries</div>
+              <a href="tel:+94762766362" class="contact-info-value" style="display:block;color:var(--accent-blue);text-decoration:none;margin-top:0.4rem;font-size:0.9rem;">+94 76 276 6362</a>
+              <div class="contact-info-sub">Service Department</div>
+            </div>
+            <div>
+              <div class="contact-info-icon-wrap gold">✉️</div>
+              <div class="contact-info-label">Email Us</div>
+              <a href="mailto:info@motoelite.in" class="contact-info-value" style="display:block;color:var(--accent-blue);text-decoration:none;word-break:break-all;">info@motoelite.in</a>
+              <div class="contact-info-sub">General Enquiries</div>
+              <a href="mailto:service@motoelite.in" class="contact-info-value" style="display:block;color:var(--accent-blue);text-decoration:none;margin-top:0.4rem;font-size:0.9rem;word-break:break-all;">service@motoelite.in</a>
+              <div class="contact-info-sub">Service Bookings</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Hours -->
+        <div class="contact-info-card reveal reveal-delay-2">
+          <div class="contact-info-icon-wrap purple">⏰</div>
+          <div class="contact-info-label">Business Hours</div>
+          <div class="contact-info-value" style="margin-bottom:var(--spacing-md);">We're Open Mon–Sat</div>
+          <div>
+            <div class="hours-row">
+              <span class="hours-day">Monday – Friday</span>
+              <span class="hours-time">9:00 AM – 7:00 PM</span>
+            </div>
+            <div class="hours-row">
+              <span class="hours-day">Saturday</span>
+              <span class="hours-time">9:00 AM – 6:00 PM</span>
+            </div>
+            <div class="hours-row">
+              <span class="hours-day">Sunday</span>
+              <span class="hours-closed">Closed</span>
+            </div>
+            <div class="hours-row">
+              <span class="hours-day">Public Holidays</span>
+              <span class="hours-closed">Closed</span>
+            </div>
+          </div>
+          <div style="margin-top:var(--spacing-md);padding:0.6rem 0.75rem;background:rgba(0,212,120,0.06);border:1px solid rgba(0,212,120,0.15);border-radius:var(--radius-sm);font-size:0.8rem;color:#00d478;">
+            🟢 Open Now &nbsp;·&nbsp; Closes at 7:00 PM today
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="contact-info-card reveal reveal-delay-3">
+          <div class="contact-info-label">Follow Us</div>
+          <div class="contact-info-value" style="margin-bottom:var(--spacing-sm);">Stay connected on social media</div>
+          <div class="social-links">
+            <a href="#" class="social-link" id="social-instagram" title="Instagram" aria-label="Instagram">📸</a>
+            <a href="#" class="social-link" id="social-facebook" title="Facebook" aria-label="Facebook">📘</a>
+            <a href="#" class="social-link" id="social-youtube" title="YouTube" aria-label="YouTube">▶️</a>
+            <a href="#" class="social-link" id="social-twitter" title="Twitter/X" aria-label="Twitter">🐦</a>
+            <a href="https://wa.me/919876543210" class="social-link" id="social-whatsapp" title="WhatsApp" aria-label="WhatsApp">💬</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Right: Contact Form ───────────────────────────── -->
+      <div class="contact-form-card reveal-right">
+        <div class="contact-form-header">
+          <div class="section-tag" style="margin-bottom:0.75rem;">💬 Send A Message</div>
+          <h2 style="font-size:1.8rem;margin-bottom:0.4rem;">Drop Us A Line</h2>
+          <p style="color:var(--text-muted);font-size:0.9rem;">
+            We typically respond within 2–4 business hours.
+          </p>
+        </div>
+
+        <!-- The Form -->
+        <form id="contact-form" novalidate>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="contact-name">Full Name *</label>
+              <input
+                type="text"
+                id="contact-name"
+                name="name"
+                class="form-control"
+                placeholder="John Doe"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="contact-phone">Phone Number</label>
+              <input
+                type="tel"
+                id="contact-phone"
+                name="phone"
+                class="form-control"
+                placeholder="+94 76 276 6362"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-email">Email Address *</label>
+            <input
+              type="email"
+              id="contact-email"
+              name="email"
+              class="form-control"
+              placeholder="john@example.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-subject">Subject *</label>
+            <select id="contact-subject" name="subject" class="form-control" required>
+              <option value="">Select a subject</option>
+              <option value="General Enquiry">General Enquiry</option>
+              <option value="Bike Purchase Enquiry">Bike Purchase Enquiry</option>
+              <option value="Booking Query">Booking Query</option>
+              <option value="Service Appointment">Service Appointment</option>
+              <option value="Price Quote Request">Price Quote Request</option>
+              <option value="Complaint / Feedback">Complaint / Feedback</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-bike">Bike of Interest <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+            <select id="contact-bike" name="bikeInterest" class="form-control">
+              <option value="">Select a bike (optional)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="contact-message">Your Message *</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              class="form-control"
+              rows="5"
+              placeholder="Tell us how we can help you..."
+              required
+            ></textarea>
+          </div>
+
+          <!-- Checkbox -->
+          <div class="form-group" style="display:flex;align-items:flex-start;gap:0.75rem;">
+            <input
+              type="checkbox"
+              id="contact-consent"
+              name="consent"
+              style="width:18px;height:18px;margin-top:2px;accent-color:var(--accent-blue);flex-shrink:0;cursor:pointer;"
+              required
+            />
+            <label for="contact-consent" style="font-size:0.85rem;color:var(--text-secondary);cursor:pointer;line-height:1.6;">
+              I consent to MotoElite contacting me via email/phone regarding my enquiry. I have read the
+              <a href="#" style="color:var(--accent-blue);">Privacy Policy</a>.
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+            id="contact-submit-btn"
+            style="width:100%;justify-content:center;margin-top:var(--spacing-sm);"
+          >
+            📨 Send Message
+          </button>
+        </form>
+
+        <!-- Success State -->
+        <div class="contact-success" id="contact-success">
+          <div class="contact-success-icon">✅</div>
+          <h2 style="color:#00d478;margin-bottom:0.5rem;">Message Sent!</h2>
+          <p style="color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.8;">
+            Thank you for reaching out! Our team will get back to you within 2–4 business hours.
+          </p>
+          <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="resetContactForm()" id="send-another-btn">
+              📨 Send Another Message
+            </button>
+            <a href="bikes.html" class="btn btn-primary" id="browse-bikes-from-contact">Browse Bikes</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Quick Contact Row ───────────────────────────────── -->
+    <div style="margin-top:var(--spacing-2xl);">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--spacing-lg);">
+        <div class="glass-card" style="text-align:center;padding:var(--spacing-xl);" class="reveal">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🚀</div>
+          <h4 style="margin-bottom:0.4rem;">Fast Response</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);">We reply within 2–4 hours on business days</p>
+        </div>
+        <div class="glass-card" style="text-align:center;padding:var(--spacing-xl);">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🛡️</div>
+          <h4 style="margin-bottom:0.4rem;">No Spam</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);">Your contact details are never shared with third parties</p>
+        </div>
+        <div class="glass-card" style="text-align:center;padding:var(--spacing-xl);">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🎯</div>
+          <h4 style="margin-bottom:0.4rem;">Expert Advice</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);">Speak directly with our certified motorcycle consultants</p>
+        </div>
+        <div class="glass-card" style="text-align:center;padding:var(--spacing-xl);">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🏍️</div>
+          <h4 style="margin-bottom:0.4rem;">Test Rides</h4>
+          <p style="font-size:0.85rem;color:var(--text-muted);">Ask us to schedule a free test ride for any available bike</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ─── Footer ───────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none;padding-top:0;">
+      <span>© 2024 MotoElite Premium Showroom. All rights reserved.</span>
+      <a href="admin/login.html" style="color:var(--text-muted);font-size:0.8rem;">Admin Portal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  initScrollReveal();
+  await loadBikesForSelect();
+  setupContactForm();
+});
+
+/* Load bikes into the "Bike of Interest" dropdown */
+async function loadBikesForSelect() {
+  try {
+    const data = await apiGet('/bikes?limit=50&page=1&comingSoon=false');
+    const select = document.getElementById('contact-bike');
+    (data.bikes || []).forEach(bike => {
+      const opt = document.createElement('option');
+      opt.value = bike._id;
+      opt.textContent = `${bike.brand} ${bike.modelName}`;
+      select.appendChild(opt);
+    });
+  } catch (e) {}
+}
+
+/* Contact form submission */
+function setupContactForm() {
+  const form    = document.getElementById('contact-form');
+  const btn     = document.getElementById('contact-submit-btn');
+  const success = document.getElementById('contact-success');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name    = document.getElementById('contact-name').value.trim();
+    const email   = document.getElementById('contact-email').value.trim();
+    const subject = document.getElementById('contact-subject').value;
+    const message = document.getElementById('contact-message').value.trim();
+    const consent = document.getElementById('contact-consent').checked;
+
+    // Basic validation
+    if (!name) { showToast('Please enter your full name.', 'error'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('Please enter a valid email address.', 'error'); return;
+    }
+    if (!subject) { showToast('Please select a subject.', 'error'); return; }
+    if (!message || message.length < 10) {
+      showToast('Please enter a message of at least 10 characters.', 'error'); return;
+    }
+    if (!consent) {
+      showToast('Please accept the consent checkbox to continue.', 'error'); return;
+    }
+
+    // Show loading state
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;"></span> Sending...';
+
+    try {
+      // POST to backend — message stored in MongoDB
+      const bikeInterest = document.getElementById('contact-bike').value || null;
+      const phone = document.getElementById('contact-phone').value.trim();
+
+      await apiPost('/contact', {
+        name,
+        email,
+        phone: phone || '',
+        subject,
+        message,
+        bikeInterest,
+      });
+
+      // Show success state
+      form.style.display = 'none';
+      success.style.display = 'block';
+      showToast('Your message has been sent! We\'ll be in touch soon. 📬', 'success', 5000);
+    } catch (err) {
+      showToast(err.message || 'Failed to send message. Please try again.', 'error');
+      btn.disabled = false;
+      btn.innerHTML = '📨 Send Message';
+    }
+  });
+}
+
+/* Reset contact form */
+function resetContactForm() {
+  const form    = document.getElementById('contact-form');
+  const success = document.getElementById('contact-success');
+  const btn     = document.getElementById('contact-submit-btn');
+
+  form.reset();
+  form.style.display = 'block';
+  success.style.display = 'none';
+  btn.disabled = false;
+  btn.innerHTML = '📨 Send Message';
+}
+</script>
+</body>
+</html>

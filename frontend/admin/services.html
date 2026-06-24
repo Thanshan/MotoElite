@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Services — MotoElite Admin</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    .services-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .service-admin-card {
+      background: var(--glass-bg);
+      border: var(--border-glass);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-xl);
+      transition: all var(--transition-base);
+      position: relative;
+    }
+
+    .service-admin-card:hover {
+      border-color: rgba(0, 212, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .service-admin-card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      background: rgba(0, 212, 255, 0.08);
+      border: 1px solid rgba(0, 212, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .service-admin-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .service-admin-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .service-admin-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--spacing-md);
+      border-top: var(--border-glass);
+    }
+
+    .service-admin-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      background: var(--gradient-gold);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .service-admin-duration {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .service-card-actions {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      display: flex;
+      gap: 0.4rem;
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+
+    .service-admin-card:hover .service-card-actions {
+      opacity: 1;
+    }
+
+    .service-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-md);
+    }
+
+    .service-form-full { grid-column: 1 / -1; }
+
+    .icon-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: var(--spacing-sm);
+    }
+
+    .icon-option {
+      width: 42px;
+      height: 42px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .icon-option:hover, .icon-option.selected {
+      border-color: var(--accent-blue);
+      background: rgba(0, 212, 255, 0.08);
+    }
+
+    .empty-services {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- ── Sidebar ──────────────────────────────────────────── -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-icon">🏍️</div>
+      <div>
+        <div class="sidebar-title">MotoElite</div>
+        <div class="sidebar-subtitle">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-title">Main</div>
+      <a href="dashboard.html" class="sidebar-link" id="nav-dashboard">
+        <span class="sidebar-link-icon">📊</span> Dashboard
+      </a>
+      <div class="sidebar-section-title">Inventory</div>
+      <a href="bikes.html" class="sidebar-link" id="nav-bikes">
+        <span class="sidebar-link-icon">🏍️</span> Manage Bikes
+      </a>
+      <div class="sidebar-section-title">Operations</div>
+      <a href="bookings.html" class="sidebar-link" id="nav-bookings">
+        <span class="sidebar-link-icon">📅</span> Bookings
+        <span class="sidebar-badge" id="pending-badge">0</span>
+      </a>
+      <a href="services.html" class="sidebar-link active" id="nav-services">
+        <span class="sidebar-link-icon">🔧</span> Services
+      </a>
+      <div class="sidebar-section-title">Store</div>
+      <a href="../index.html" class="sidebar-link" target="_blank">
+        <span class="sidebar-link-icon">🌐</span> View Website
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">A</div>
+        <div>
+          <div style="font-size:0.875rem;font-weight:600;" id="sidebar-username">Admin</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);" id="sidebar-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="sidebar-logout-btn" style="width:100%;justify-content:center;">
+        🚪 Logout
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main Content ─────────────────────────────────────── -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <button class="btn btn-secondary btn-sm" id="sidebar-toggle-btn" style="display:none;">☰</button>
+      <div class="admin-topbar-title">🔧 Service Management</div>
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <span style="font-size:0.85rem;color:var(--text-muted);" id="services-count"></span>
+        <button class="btn btn-primary btn-sm" onclick="openAddServiceModal()" id="add-service-btn">
+          ➕ Add Service
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Search -->
+      <div style="margin-bottom:var(--spacing-lg);">
+        <input type="text" id="service-search" class="form-control" placeholder="🔍  Search services..." style="max-width:360px;" />
+      </div>
+
+      <!-- Services Grid -->
+      <div class="services-admin-grid" id="services-admin-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+          <div class="spinner" style="margin:auto;"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════ ADD / EDIT SERVICE MODAL ═══════════ -->
+<div class="modal-overlay" id="service-modal">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <h3 id="service-modal-title">➕ Add New Service</h3>
+      <button class="modal-close" onclick="closeModal('service-modal')">✕</button>
+    </div>
+
+    <form id="service-form" novalidate>
+      <input type="hidden" id="svc-id" />
+
+      <div class="service-form-grid">
+
+        <div class="form-group service-form-full">
+          <label class="form-label" for="svc-name">Service Name *</label>
+          <input type="text" id="svc-name" class="form-control" placeholder="e.g. Full Engine Overhaul" required />
+        </div>
+
+        <div class="form-group service-form-full">
+          <label class="form-label" for="svc-desc">Description *</label>
+          <textarea id="svc-desc" class="form-control" rows="3"
+            placeholder="Describe what this service includes..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="svc-price">Price (₹) *</label>
+          <input type="number" id="svc-price" class="form-control" placeholder="2500" min="0" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="svc-duration">Duration</label>
+          <input type="text" id="svc-duration" class="form-control" placeholder="e.g. 2–3 Hours, 1 Day" />
+        </div>
+
+        <!-- Icon Picker -->
+        <div class="form-group service-form-full">
+          <label class="form-label">Icon</label>
+          <div class="icon-picker" id="icon-picker">
+            <!-- Rendered by JS -->
+          </div>
+          <input type="hidden" id="svc-icon" value="wrench" />
+        </div>
+
+        <!-- Active Toggle -->
+        <div class="form-group service-form-full">
+          <label class="form-label">Status</label>
+          <div style="display:flex;gap:var(--spacing-lg);">
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+              <input type="radio" name="svc-active" id="svc-active-true" value="true" checked style="accent-color:var(--accent-blue);" />
+              <span style="font-size:0.875rem;">Active</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+              <input type="radio" name="svc-active" id="svc-active-false" value="false" style="accent-color:var(--accent-blue);" />
+              <span style="font-size:0.875rem;">Inactive</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display:flex;gap:var(--spacing-md);justify-content:flex-end;margin-top:var(--spacing-xl);padding-top:var(--spacing-lg);border-top:var(--border-glass);">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('service-modal')">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="service-form-submit-btn">💾 Save Service</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════ DELETE SERVICE MODAL ═══════════ -->
+<div class="modal-overlay" id="delete-service-modal">
+  <div class="modal" style="max-width:420px;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:var(--spacing-md);">🗑️</div>
+    <h3 style="margin-bottom:0.5rem;">Delete Service?</h3>
+    <p style="color:var(--text-secondary);margin-bottom:var(--spacing-xl);" id="delete-service-confirm-text">
+      This action cannot be undone.
+    </p>
+    <div style="display:flex;gap:var(--spacing-md);justify-content:center;">
+      <button class="btn btn-secondary" onclick="closeModal('delete-service-modal')">Cancel</button>
+      <button class="btn" id="confirm-delete-service-btn" style="background:var(--accent-red);color:#fff;">🗑️ Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/admin.js"></script>
+<script>
+/* ─── Icon Config ────────────────────────────────────────────── */
+const ICONS = [
+  { key: 'wrench',   emoji: '🔧', label: 'Wrench' },
+  { key: 'droplet',  emoji: '💧', label: 'Oil/Fluid' },
+  { key: 'settings', emoji: '⚙️', label: 'Settings' },
+  { key: 'disc',     emoji: '💿', label: 'Disc/Brake' },
+  { key: 'zap',      emoji: '⚡', label: 'Electrical' },
+  { key: 'search',   emoji: '🔍', label: 'Inspection' },
+  { key: 'shield',   emoji: '🛡️', label: 'Protection' },
+  { key: 'star',     emoji: '⭐', label: 'Premium' },
+  { key: 'tool',     emoji: '🛠️', label: 'Tools' },
+  { key: 'refresh',  emoji: '🔄', label: 'Refresh' },
+  { key: 'tire',     emoji: '🔩', label: 'Tire/Bolt' },
+  { key: 'helmet',   emoji: '⛑️', label: 'Safety' },
+];
+
+/* ─── State ──────────────────────────────────────────────────── */
+let allServices      = [];
+let filteredServices = [];
+let editMode         = false;
+let editServiceId    = null;
+let selectedIcon     = 'wrench';
+let deleteServiceId  = null;
+
+/* ─── Init ───────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  requireAuth();
+  initAdminSidebar();
+  renderIconPicker();
+  setupServiceSearch();
+  await loadAllServices();
+  await loadPendingBadge();
+});
+
+/* ─── Pending Badge ──────────────────────────────────────────── */
+async function loadPendingBadge() {
+  try {
+    const data = await adminGet('/bookings?limit=200&page=1');
+    const count = (data.bookings || []).filter(b => b.status === 'pending').length;
+    document.getElementById('pending-badge').textContent = count;
+  } catch (e) {}
+}
+
+/* ─── Load Services ──────────────────────────────────────────── */
+async function loadAllServices() {
+  document.getElementById('services-admin-grid').innerHTML =
+    '<div style="grid-column:1/-1;text-align:center;padding:3rem;"><div class="spinner" style="margin:auto;"></div></div>';
+
+  try {
+    const data   = await adminGet('/services?all=true');
+    allServices  = data.services || [];
+    document.getElementById('services-count').textContent = `${allServices.length} service${allServices.length !== 1 ? 's' : ''}`;
+    applyServiceFilter();
+  } catch (err) {
+    document.getElementById('services-admin-grid').innerHTML =
+      `<div class="empty-services"><div style="font-size:3rem;">⚠️</div><p style="margin-top:1rem;">Unable to load services: ${err.message}</p></div>`;
+  }
+}
+
+/* ─── Search Filter ──────────────────────────────────────────── */
+let searchTimer;
+function setupServiceSearch() {
+  document.getElementById('service-search').addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyServiceFilter, 300);
+  });
+}
+
+function applyServiceFilter() {
+  const q = document.getElementById('service-search').value.toLowerCase();
+  filteredServices = allServices.filter(s =>
+    !q ||
+    (s.serviceName || '').toLowerCase().includes(q) ||
+    (s.description || '').toLowerCase().includes(q)
+  );
+  renderServicesGrid();
+}
+
+/* ─── Render Grid ────────────────────────────────────────────── */
+function renderServicesGrid() {
+  const grid = document.getElementById('services-admin-grid');
+
+  if (!filteredServices.length) {
+    grid.innerHTML = `
+      <div class="empty-services">
+        <div style="font-size:3rem;">🔧</div>
+        <h3 style="margin:1rem 0 0.5rem;">No Services Found</h3>
+        <p>Add your first service package using the button above.</p>
+        <button class="btn btn-primary" onclick="openAddServiceModal()" style="margin-top:1rem;" id="empty-add-service-btn">
+          ➕ Add Service
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = filteredServices.map(svc => {
+    const iconObj = ICONS.find(i => i.key === svc.icon) || ICONS[0];
+    return `
+      <div class="service-admin-card">
+        <div class="service-card-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openEditServiceModal('${svc._id}')" id="edit-svc-${svc._id}">✏️</button>
+          <button class="btn btn-sm"
+            style="background:rgba(255,60,90,0.1);border:1px solid rgba(255,60,90,0.3);color:var(--accent-red);"
+            onclick="openDeleteServiceModal('${svc._id}','${(svc.serviceName || '').replace(/'/g, "\\'")}')"
+            id="del-svc-${svc._id}">🗑️</button>
+        </div>
+
+        <div class="service-admin-card-icon">${iconObj.emoji}</div>
+        <div class="service-admin-name">${svc.serviceName}</div>
+        <p class="service-admin-desc">${svc.description || '—'}</p>
+
+        ${(svc.features && svc.features.length) ? `
+        <div style="margin-bottom:var(--spacing-md);">
+          ${svc.features.map(f => `<span class="feature-tag" style="margin:2px;font-size:0.72rem;">✓ ${f}</span>`).join('')}
+        </div>` : ''}
+
+        <div class="service-admin-footer">
+          <div>
+            <div class="service-admin-price">${formatPrice(svc.price)}</div>
+            ${svc.duration ? `<div class="service-admin-duration">⏱️ ${svc.duration}</div>` : ''}
+          </div>
+          <span class="badge ${svc.isActive !== false ? 'badge-available' : 'badge-unavailable'}">
+            ${svc.isActive !== false ? '● Active' : '● Inactive'}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ─── Icon Picker ────────────────────────────────────────────── */
+function renderIconPicker() {
+  document.getElementById('icon-picker').innerHTML = ICONS.map(icon => `
+    <div
+      class="icon-option ${icon.key === selectedIcon ? 'selected' : ''}"
+      onclick="selectIcon('${icon.key}')"
+      title="${icon.label}"
+      id="icon-opt-${icon.key}"
+    >${icon.emoji}</div>
+  `).join('');
+}
+
+function selectIcon(key) {
+  selectedIcon = key;
+  document.getElementById('svc-icon').value = key;
+  document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+  const el = document.getElementById(`icon-opt-${key}`);
+  if (el) el.classList.add('selected');
+}
+
+/* ─── Open Add Modal ─────────────────────────────────────────── */
+function openAddServiceModal() {
+  editMode      = false;
+  editServiceId = null;
+  selectedIcon  = 'wrench';
+
+  document.getElementById('service-modal-title').textContent = '➕ Add New Service';
+  document.getElementById('service-form-submit-btn').textContent = '💾 Add Service';
+  document.getElementById('service-form').reset();
+  document.getElementById('svc-id').value = '';
+  document.getElementById('svc-active-true').checked = true;
+
+  renderIconPicker();
+  openModal('service-modal');
+}
+
+/* ─── Open Edit Modal ────────────────────────────────────────── */
+function openEditServiceModal(serviceId) {
+  editMode      = true;
+  editServiceId = serviceId;
+
+  const svc = allServices.find(s => s._id === serviceId);
+  if (!svc) { showToast('Service not found.', 'error'); return; }
+
+  document.getElementById('service-modal-title').textContent = '✏️ Edit Service';
+  document.getElementById('service-form-submit-btn').textContent = '💾 Update Service';
+
+  document.getElementById('svc-id').value    = svc._id;
+  document.getElementById('svc-name').value  = svc.serviceName || '';
+  document.getElementById('svc-desc').value  = svc.description || '';
+  document.getElementById('svc-price').value = svc.price || '';
+  document.getElementById('svc-duration').value = svc.duration || '';
+
+  selectedIcon = svc.icon || 'wrench';
+  document.getElementById('svc-icon').value = selectedIcon;
+  renderIconPicker();
+
+  document.getElementById(svc.isActive !== false ? 'svc-active-true' : 'svc-active-false').checked = true;
+
+  openModal('service-modal');
+}
+
+/* ─── Form Submit ────────────────────────────────────────────── */
+document.getElementById('service-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('service-form-submit-btn');
+
+  const name  = document.getElementById('svc-name').value.trim();
+  const desc  = document.getElementById('svc-desc').value.trim();
+  const price = document.getElementById('svc-price').value.trim();
+
+  if (!name || !desc || !price) {
+    showToast('Name, description and price are required.', 'error');
+    return;
+  }
+
+  btn.disabled    = true;
+  btn.textContent = 'Saving...';
+
+  const payload = {
+    serviceName:  name,
+    description:  desc,
+    price:        Number(price),
+    duration:     document.getElementById('svc-duration').value.trim(),
+    icon:         document.getElementById('svc-icon').value || 'wrench',
+    isActive:     document.getElementById('svc-active-true').checked,
+  };
+
+  try {
+    if (editMode && editServiceId) {
+      await adminPut(`/services/${editServiceId}`, payload);
+      showToast('Service updated successfully! ✅', 'success');
+    } else {
+      await adminPost('/services', payload);
+      showToast('Service added successfully! ✅', 'success');
+    }
+    closeModal('service-modal');
+    await loadAllServices();
+  } catch (err) {
+    showToast('Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = editMode ? '💾 Update Service' : '💾 Add Service';
+  }
+});
+
+/* ─── Delete Service ─────────────────────────────────────────── */
+function openDeleteServiceModal(serviceId, serviceName) {
+  deleteServiceId = serviceId;
+  document.getElementById('delete-service-confirm-text').textContent =
+    `Are you sure you want to delete "${serviceName}"? This cannot be undone.`;
+  openModal('delete-service-modal');
+}
+
+document.getElementById('confirm-delete-service-btn').addEventListener('click', async () => {
+  if (!deleteServiceId) return;
+  const btn = document.getElementById('confirm-delete-service-btn');
+  btn.disabled    = true;
+  btn.textContent = 'Deleting...';
+
+  try {
+    await adminDelete(`/services/${deleteServiceId}`);
+    showToast('Service deleted.', 'success');
+    closeModal('delete-service-modal');
+    await loadAllServices();
+  } catch (err) {
+    showToast('Delete failed: ' + err.message, 'error');
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = '🗑️ Delete';
+    deleteServiceId = null;
+  }
+});
+</script>
+</body>
+</html>

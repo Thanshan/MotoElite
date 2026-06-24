@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bike Details — MotoElite</title>
+  <meta name="description" content="Full specifications, features, and booking options for this motorcycle." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/bikes.css" />
+</head>
+
+<body>
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🏍️</div>
+        <div>
+          <span class="nav-logo-text">MotoElite</span>
+          <span class="nav-logo-sub">Premium Showroom</span>
+        </div>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="bikes.html" class="active">Available Bikes</a></li>
+        <li><a href="coming-soon.html">Coming Soon</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="booking.html">Bike Booking</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="booking.html" class="nav-book-btn">Book Now</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="section page-content" style="padding-top:calc(var(--nav-height) + 2rem);">
+    <div class="container" id="bike-detail-content">
+      <div style="display:flex;align-items:center;justify-content:center;padding:4rem;">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/three-bike.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const bikeId = params.get('id');
+
+      if (!bikeId) {
+        window.location.href = 'bikes.html';
+        return;
+      }
+
+      try {
+        const data = await apiGet(`/bikes/${bikeId}`);
+        const { bike, related } = data;
+
+        // Update page title
+        document.title = `${bike.brand} ${bike.modelName} — MotoElite`;
+
+        renderBikeDetail(bike, related);
+        
+        // Initialize 3D model and hide loading state
+        setTimeout(() => {
+          if (window.initThreeBike) {
+            window.initThreeBike('bike-canvas');
+            const loading = document.getElementById('model-loading');
+            if (loading) loading.style.display = 'none';
+          }
+        }, 300);
+      } catch (err) {
+        document.getElementById('bike-detail-content').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">❌</div>
+        <h3>Bike Not Found</h3>
+        <p>${err.message}</p>
+        <a href="bikes.html" class="btn btn-primary" style="margin-top:1rem;">Back to Bikes</a>
+      </div>
+    `;
+      }
+    });
+
+    function renderBikeDetail(bike, related) {
+      const specs = bike.specifications || {};
+      const features = bike.features || [];
+      const allImages = [bike.image, ...(bike.images || [])].filter(Boolean);
+
+      document.getElementById('bike-detail-content').innerHTML = `
+    <!-- Breadcrumb -->
+    <nav style="margin-bottom:2rem;font-size:0.875rem;color:var(--text-muted);">
+      <a href="bikes.html" style="color:var(--accent-blue);">← All Bikes</a>
+      <span style="margin:0 0.5rem;">/</span>
+      <span>${bike.brand} ${bike.modelName}</span>
+    </nav>
+
+    <!-- Main Grid -->
+    <div class="bike-detail-grid">
+      <!-- Gallery -->
+      <div class="bike-gallery">
+        <div class="bike-gallery-main" id="main-img" style="position: relative; overflow: hidden; background: radial-gradient(circle at center, #1a1a24 0%, #07070b 100%); border-radius: var(--radius-lg);">
+          <div id="model-loading" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; background: var(--glass-bg);">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">Loading 3D Model</p>
+          </div>
+          <canvas id="bike-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5;"></canvas>
+          <img src="${bikeImgUrl(bike.image)}" alt="${bike.modelName}"
+            onerror="this.src='images/bike-placeholder.jpg'" id="gallery-main-img" style="position: relative; z-index: 6; display: none;" />
+        </div>
+        ${allImages.length > 1 ? `
+        <div class="bike-gallery-thumbs">
+          ${allImages.map((img, i) => `
+            <div class="bike-gallery-thumb ${i === 0 ? 'active' : ''}" onclick="switchImage('${bikeImgUrl(img)}', this)">
+              <img src="${bikeImgUrl(img)}" alt="${bike.modelName}" onerror="this.src='images/bike-placeholder.jpg'" />
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+
+      <!-- Details -->
+      <div>
+        <div class="bike-detail-brand">${bike.brand}</div>
+        <h1 style="font-size:clamp(1.8rem,3vw,2.8rem);margin-bottom:0.75rem;">${bike.modelName}</h1>
+        
+        <div style="display:flex;gap:0.75rem;align-items:center;margin-bottom:1rem;">
+          <span class="badge ${bike.availability ? 'badge-available' : 'badge-unavailable'}">
+            ${bike.availability ? '● In Stock' : '● Out of Stock'}
+          </span>
+          <span class="badge badge-coming-soon">${bike.category || 'Sport'}</span>
+        </div>
+
+        <div class="bike-detail-price">${formatPrice(bike.price)}</div>
+
+        ${bike.description ? `<p style="color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.8;">${bike.description}</p>` : ''}
+
+        <!-- Quick Specs -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.5rem;">
+          ${specs.engine ? `<div class="glass-card" style="padding:0.75rem 1rem;">
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Engine</div>
+            <div style="font-size:0.9rem;font-weight:600;margin-top:2px;">${specs.engine}</div>
+          </div>` : ''}
+          ${specs.power ? `<div class="glass-card" style="padding:0.75rem 1rem;">
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Power</div>
+            <div style="font-size:0.9rem;font-weight:600;margin-top:2px;">${specs.power}</div>
+          </div>` : ''}
+          ${specs.topSpeed ? `<div class="glass-card" style="padding:0.75rem 1rem;">
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Top Speed</div>
+            <div style="font-size:0.9rem;font-weight:600;margin-top:2px;">${specs.topSpeed}</div>
+          </div>` : ''}
+          ${bike.engineCapacity ? `<div class="glass-card" style="padding:0.75rem 1rem;">
+            <div style="font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Displacement</div>
+            <div style="font-size:0.9rem;font-weight:600;margin-top:2px;">${bike.engineCapacity}</div>
+          </div>` : ''}
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:2rem;">
+          <a href="booking.html?bike=${bike._id}" class="btn btn-primary btn-lg" id="detail-book-btn" style="flex:1;justify-content:center;">
+            🏍️ Book This Bike
+          </a>
+          <a href="contact.html" class="btn btn-secondary" id="detail-contact-btn" style="flex:1;justify-content:center;">
+            📞 Enquire Now
+          </a>
+        </div>
+
+        <!-- Full Specs Table -->
+        ${Object.keys(specs).length ? `
+        <h3 style="margin-bottom:1rem;">Full Specifications</h3>
+        <table class="spec-table">
+          <tbody>
+            ${Object.entries(specs).filter(([k, v]) => v).map(([key, val]) => `
+              <tr>
+                <td>${key.replace(/([A-Z])/g, ' $1').trim()}</td>
+                <td>${val}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>` : ''}
+
+        <!-- Features -->
+        ${features.length ? `
+        <h3 style="margin:1.5rem 0 1rem;">Key Features</h3>
+        <div>
+          ${features.map(f => `<span class="feature-tag">✓ ${f}</span>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+
+    <!-- Related Bikes -->
+    ${related && related.length ? `
+    <div style="margin-top:4rem;">
+      <h2 style="margin-bottom:2rem;">Related <span class="text-gradient">Bikes</span></h2>
+      <div class="featured-bikes-grid">
+        ${related.map(rb => `
+          <div class="bike-card">
+            <div class="bike-card-image">
+              <img src="${bikeImgUrl(rb.image)}" alt="${rb.modelName}" onerror="this.src='images/bike-placeholder.jpg'" loading="lazy" />
+              <div class="bike-card-image-overlay"></div>
+            </div>
+            <div class="bike-card-body">
+              <div class="bike-card-brand">${rb.brand}</div>
+              <h3 class="bike-card-name">${rb.modelName}</h3>
+              <div class="bike-card-price">${formatPrice(rb.price)}</div>
+              <div class="bike-card-actions">
+                <a href="bike-detail.html?id=${rb._id}" class="btn btn-secondary btn-sm">View Details</a>
+                <a href="booking.html?bike=${rb._id}" class="btn btn-primary btn-sm">Book Now</a>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
+  `;
+    }
+
+    function switchImage(src, thumbEl) {
+      const mainImg = document.getElementById('gallery-main-img');
+      const canvas = document.getElementById('bike-canvas');
+      mainImg.src = src;
+      mainImg.style.display = 'block';
+      if (canvas) canvas.style.display = 'none';
+      document.querySelectorAll('.bike-gallery-thumb').forEach(t => t.classList.remove('active'));
+      thumbEl.classList.add('active');
+    }
+  </script>
+</body>
+
+</html>

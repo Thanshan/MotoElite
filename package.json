@@ -1,0 +1,32 @@
+{
+  "name": "motoelite-motorbike-showroom",
+  "version": "1.0.0",
+  "description": "Premium Motorbike Showroom — Full-stack web application with Node.js backend, MongoDB database, and vanilla HTML/CSS/JS frontend featuring Three.js 3D hero section and admin dashboard.",
+  "private": true,
+  "author": "MotoElite Dev Team",
+  "license": "MIT",
+  "keywords": [
+    "motorbike",
+    "showroom",
+    "nodejs",
+    "express",
+    "mongodb",
+    "threejs",
+    "jwt",
+    "admin-dashboard"
+  ],
+  "scripts": {
+    "install:backend": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "setup": "npm run install:backend && echo \"✅ Setup complete! Copy backend/.env.example to backend/.env and run npm run seed\""
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "workspaces": [
+    "backend"
+  ]
+}

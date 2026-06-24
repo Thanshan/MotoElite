@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MotoElite — Premium Motorbike Showroom</title>
+  <meta name="description" content="Experience the ultimate motorcycle showroom. Explore premium bikes, book test rides, and discover world-class service at MotoElite." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/home.css" />
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+<!-- ─── Loading Screen ──────────────────────────────────────── -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <p style="color:var(--text-muted);font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;">Loading Showroom</p>
+</div>
+
+<!-- ─── Navbar ──────────────────────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🏍️</div>
+      <div>
+        <span class="nav-logo-text">MotoElite</span>
+        <span class="nav-logo-sub">Premium Showroom</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="bikes.html">Available Bikes</a></li>
+      <li><a href="coming-soon.html">Coming Soon</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="booking.html">Bike Booking</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="booking.html" class="nav-book-btn">Book Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ─── Hero Section ─────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-overlay"></div>
+  <div class="grid-dots"></div>
+
+  <!-- Decorative orbs -->
+  <div class="orb orb-blue" style="width:600px;height:600px;top:-200px;right:-100px;opacity:0.3;"></div>
+  <div class="orb orb-gold" style="width:400px;height:400px;bottom:-100px;left:-100px;opacity:0.2;"></div>
+
+  <div class="hero-content">
+    <!-- Text -->
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-line"></span>
+        <span class="hero-eyebrow-text">Premium Showroom · Est. 2018</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line1">Ride Beyond</span>
+        <span class="line2">LEGENDS</span>
+        <span class="line3">Born Here</span>
+      </h1>
+
+      <p class="hero-description">
+        Step into India's most premium motorcycle showroom. Experience the thrill of 
+        world-class bikes with cutting-edge technology and unmatched performance.
+      </p>
+
+      <div class="hero-actions">
+        <a href="booking.html" class="btn btn-primary btn-lg" id="hero-book-btn">
+          🏍️ Book Test Ride
+        </a>
+        <a href="bikes.html" class="btn btn-secondary btn-lg" id="hero-view-bikes-btn">
+          View All Bikes →
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="500" data-suffix="+">0+</div>
+          <div class="hero-stat-label">Happy Customers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="50" data-suffix="+">0+</div>
+          <div class="hero-stat-label">Bike Models</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number" data-count="6">0</div>
+          <div class="hero-stat-label">Years Experience</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Three.js 3D Bike -->
+    <div class="hero-3d">
+      <div class="hero-3d-glow"></div>
+      <canvas id="bike-canvas" style="width:100%;height:100%;border-radius:20px;"></canvas>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" aria-hidden="true">
+    <div class="scroll-mouse">
+      <div class="scroll-wheel"></div>
+    </div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ─── Features Bar ──────────────────────────────────────────── -->
+<div class="features-bar">
+  <div class="container">
+    <div class="features-bar-grid">
+      <div class="feature-item">
+        <div class="feature-item-icon">🚀</div>
+        <span>High Performance Bikes</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-icon">🔧</div>
+        <span>Expert Service Center</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-icon">💳</div>
+        <span>Easy EMI Options</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-icon">🛡️</div>
+        <span>Extended Warranty</span>
+      </div>
+      <div class="feature-item">
+        <div class="feature-item-icon">📞</div>
+        <span>24/7 Support</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Featured Bikes ─────────────────────────────────────────── -->
+<section class="section" id="featured-bikes">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag reveal">🏆 Our Collection</div>
+      <h2 class="section-title reveal reveal-delay-1">
+        Featured <span>Motorcycles</span>
+      </h2>
+      <p class="section-subtitle reveal reveal-delay-2">
+        Handpicked machines that define performance, style, and engineering excellence.
+      </p>
+    </div>
+    <div class="featured-bikes-grid" id="featured-bikes-grid">
+      <!-- Loaded dynamically -->
+      <div style="grid-column:1/-1;text-align:center;padding:3rem;">
+        <div class="spinner" style="margin:0 auto;"></div>
+      </div>
+    </div>
+    <div class="text-center" style="margin-top:2.5rem;">
+      <a href="bikes.html" class="btn btn-secondary btn-lg reveal">View All Bikes →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Why Choose Us ──────────────────────────────────────────── -->
+<section class="section" style="background:var(--bg-secondary);border-top:var(--border-glass);border-bottom:var(--border-glass);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag reveal">⭐ Why MotoElite</div>
+      <h2 class="section-title reveal reveal-delay-1">The <span>MotoElite</span> Difference</h2>
+    </div>
+    <div class="why-us-grid">
+      <div class="why-us-card reveal reveal-delay-1">
+        <div class="why-us-icon">🏆</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Premium Selection</h3>
+        <p style="font-size:0.9rem;">Curated collection of the world's finest motorcycles from top brands.</p>
+      </div>
+      <div class="why-us-card reveal reveal-delay-2">
+        <div class="why-us-icon">🔧</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Expert Mechanics</h3>
+        <p style="font-size:0.9rem;">Certified technicians with 10+ years of experience servicing premium bikes.</p>
+      </div>
+      <div class="why-us-card reveal reveal-delay-3">
+        <div class="why-us-icon">💳</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Flexible Finance</h3>
+        <p style="font-size:0.9rem;">Easy EMI options, competitive interest rates, quick loan approvals.</p>
+      </div>
+      <div class="why-us-card reveal reveal-delay-4">
+        <div class="why-us-icon">🛡️</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">Full Warranty</h3>
+        <p style="font-size:0.9rem;">Comprehensive warranty coverage with roadside assistance included.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA Section ────────────────────────────────────────────── -->
+<section class="cta-section section">
+  <div class="container">
+    <div class="cta-card reveal">
+      <div style="position:relative;z-index:1;">
+        <div class="section-tag" style="margin:0 auto var(--spacing-md);">🏍️ Ready to Ride?</div>
+        <h2 style="font-size:clamp(1.8rem,4vw,3rem);margin-bottom:1rem;">
+          Book Your Test Ride Today
+        </h2>
+        <p style="color:var(--text-secondary);margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto;">
+          Experience the thrill firsthand. Visit our showroom and take your dream bike for a spin.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a href="booking.html" class="btn btn-primary btn-lg" id="cta-book-btn">Book Now →</a>
+          <a href="contact.html" class="btn btn-secondary btn-lg" id="cta-contact-btn">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Footer ──────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-text">🏍️ MotoElite</div>
+        <p style="font-size:0.9rem;color:var(--text-muted);max-width:280px;margin-bottom:1rem;">
+          Premium motorbike showroom offering the finest motorcycles with world-class service and expertise.
+        </p>
+      </div>
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="bikes.html">Available Bikes</a></li>
+          <li><a href="coming-soon.html">Coming Soon</a></li>
+          <li><a href="booking.html">Book a Bike</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Services</div>
+        <ul class="footer-links">
+          <li><a href="services.html">General Service</a></li>
+          <li><a href="services.html">Oil Change</a></li>
+          <li><a href="services.html">Engine Repair</a></li>
+          <li><a href="services.html">Full Inspection</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Contact</div>
+        <ul class="footer-links">
+          <li><a href="tel:+919876543210">+91 98765 43210</a></li>
+          <li><a href="mailto:info@motoelite.in">info@motoelite.in</a></li>
+          <li><a href="contact.html">Find Us</a></li>
+          <li><a href="about.html">About Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 MotoElite Premium Showroom. All rights reserved.</span>
+      <a href="admin/login.html" style="color:var(--text-muted);font-size:0.8rem;">Admin Portal</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/three-bike.js"></script>
+<script>
+  /* ─── Page Init ─────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Hide loading after 1.2s
+    setTimeout(() => {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }, 1200);
+
+    // Init Three.js bike
+    setTimeout(() => {
+      initThreeBike('bike-canvas');
+    }, 200);
+
+    // Init counters
+    setTimeout(() => initCounters(), 300);
+
+    // Load featured bikes
+    try {
+      const data = await apiGet('/bikes?limit=6&comingSoon=false');
+      renderFeaturedBikes(data.bikes);
+    } catch (err) {
+      document.getElementById('featured-bikes-grid').innerHTML =
+        '<p class="text-center text-muted" style="grid-column:1/-1;padding:2rem;">Unable to load bikes. Start the backend server.</p>';
+    }
+  });
+
+  function renderFeaturedBikes(bikes) {
+    const grid = document.getElementById('featured-bikes-grid');
+    if (!bikes.length) {
+      grid.innerHTML = '<p class="text-center text-muted" style="grid-column:1/-1;">No bikes found. Run the seeder!</p>';
+      return;
+    }
+    grid.innerHTML = bikes.map(bike => `
+      <div class="bike-card reveal">
+        <div class="bike-card-image">
+          <img src="${bikeImgUrl(bike.image)}" alt="${bike.modelName}"
+            onerror="this.src='images/bike-placeholder.jpg'" loading="lazy" />
+          <div class="bike-card-image-overlay"></div>
+          <div class="bike-card-badge">
+            <span class="badge ${bike.availability ? 'badge-available' : 'badge-unavailable'}">
+              ${bike.availability ? 'Available' : 'Sold Out'}
+            </span>
+          </div>
+        </div>
+        <div class="bike-card-body">
+          <div class="bike-card-brand">${bike.brand}</div>
+          <h3 class="bike-card-name">${bike.modelName}</h3>
+          <div class="bike-card-specs">
+            <div class="bike-spec">
+              <span class="bike-spec-icon">⚙️</span>
+              <span>${bike.engineCapacity}</span>
+            </div>
+            <div class="bike-spec">
+              <span class="bike-spec-icon">🏷️</span>
+              <span>${bike.category || 'Sport'}</span>
+            </div>
+          </div>
+          <div class="bike-card-price">${formatPrice(bike.price)}</div>
+          <div class="bike-card-actions">
+            <a href="bike-detail.html?id=${bike._id}" class="btn btn-secondary btn-sm">Details</a>
+            <a href="booking.html?bike=${bike._id}" class="btn btn-primary btn-sm">Book Now</a>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Trigger scroll reveal on newly added elements
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
+      el.classList.add('visible');
+    });
+  }
+</script>
+</body>
+</html>

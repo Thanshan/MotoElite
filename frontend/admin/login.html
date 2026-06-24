@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — MotoElite</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* Extra particles for the login page */
+    .login-particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .login-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatParticle {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+    }
+
+    /* Glowing ring behind the card */
+    .admin-login-page::after {
+      content: '';
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle,
+        rgba(0, 212, 255, 0.06) 0%,
+        rgba(0, 128, 255, 0.04) 40%,
+        transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      border-radius: 50%;
+      animation: pulseSlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseSlow {
+      from { transform: translate(-50%, -50%) scale(1); }
+      to   { transform: translate(-50%, -50%) scale(1.15); }
+    }
+
+    .login-error-msg {
+      background: rgba(255, 60, 90, 0.1);
+      border: 1px solid rgba(255, 60, 90, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      color: var(--accent-red);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .login-error-msg.show {
+      display: flex;
+    }
+
+    .form-control-icon-wrap {
+      position: relative;
+    }
+
+    .form-control-icon-wrap .form-control {
+      padding-left: 2.5rem;
+    }
+
+    .form-control-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      pointer-events: none;
+      color: var(--text-muted);
+    }
+
+    .form-control-icon-wrap.has-toggle .form-control {
+      padding-right: 2.8rem;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      padding: 0;
+      transition: color var(--transition-fast);
+    }
+
+    .toggle-password:hover {
+      color: var(--text-primary);
+    }
+
+    .admin-login-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin: var(--spacing-lg) 0;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .admin-login-divider::before,
+    .admin-login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .admin-back-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color var(--transition-fast);
+      margin-top: var(--spacing-lg);
+    }
+
+    .admin-back-link:hover {
+      color: var(--accent-blue);
+    }
+  </style>
+</head>
+<body>
+<div class="admin-login-page">
+
+  <!-- Floating Particles -->
+  <div class="login-particles" id="login-particles"></div>
+
+  <!-- Login Card -->
+  <div class="admin-login-card" style="position:relative;z-index:1;">
+    <!-- Logo -->
+    <div class="admin-login-logo">
+      <div class="logo-icon">🏍️</div>
+      <div class="sidebar-title" style="font-size:1.3rem;">MotoElite</div>
+      <div style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;">Admin Portal</div>
+    </div>
+
+    <h2 style="text-align:center;font-size:1.3rem;margin-bottom:0.25rem;">Welcome Back</h2>
+    <p style="text-align:center;color:var(--text-muted);font-size:0.875rem;margin-bottom:var(--spacing-xl);">
+      Sign in to manage bikes, bookings &amp; services
+    </p>
+
+    <!-- Error Message -->
+    <div class="login-error-msg" id="login-error">
+      <span>❌</span>
+      <span id="login-error-text">Invalid credentials. Please try again.</span>
+    </div>
+
+    <!-- Form -->
+    <form id="admin-login-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="admin-email">Email Address</label>
+        <div class="form-control-icon-wrap">
+          <span class="form-control-icon">✉️</span>
+          <input
+            type="email"
+            id="admin-email"
+            name="email"
+            class="form-control"
+            placeholder="admin@motoelite.in"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="admin-password">Password</label>
+        <div class="form-control-icon-wrap has-toggle">
+          <span class="form-control-icon">🔒</span>
+          <input
+            type="password"
+            id="admin-password"
+            name="password"
+            class="form-control"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            id="toggle-pass-btn"
+            aria-label="Toggle password visibility"
+          >👁️</button>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-lg);">
+        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
+          <input
+            type="checkbox"
+            id="remember-me"
+            name="remember"
+            style="accent-color:var(--accent-blue);width:16px;height:16px;"
+          />
+          Remember me
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary btn-lg"
+        id="login-submit-btn"
+        style="width:100%;justify-content:center;"
+      >
+        🔐 Sign In to Dashboard
+      </button>
+    </form>
+
+    <div class="admin-login-divider">Secure Admin Access</div>
+
+    <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);border-radius:var(--radius-sm);padding:0.75rem 1rem;font-size:0.8rem;color:var(--text-muted);text-align:center;">
+      🔒 Protected route — unauthorized access is logged and monitored
+    </div>
+
+    <a href="../index.html" class="admin-back-link" id="back-to-site-link">
+      ← Back to MotoElite Showroom
+    </a>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'http://localhost:5000/api';
+
+/* ─── Particles ─────────────────────────────────────────────── */
+(function createParticles() {
+  const container = document.getElementById('login-particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'login-particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = (Math.random() * 3 + 1) + 'px';
+    p.style.height = p.style.width;
+    p.style.animationDuration = (Math.random() * 15 + 8) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    if (Math.random() > 0.5) {
+      p.style.background = '#ffd700';
+    }
+    container.appendChild(p);
+  }
+})();
+
+/* ─── Toggle Password ───────────────────────────────────────── */
+document.getElementById('toggle-pass-btn').addEventListener('click', () => {
+  const input = document.getElementById('admin-password');
+  const btn   = document.getElementById('toggle-pass-btn');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerHTML = '🙈';
+  } else {
+    input.type = 'password';
+    btn.innerHTML = '👁️';
+  }
+});
+
+/* ─── Login Form ────────────────────────────────────────────── */
+document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const email    = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-password').value;
+  const remember = document.getElementById('remember-me').checked;
+  const btn      = document.getElementById('login-submit-btn');
+  const errorEl  = document.getElementById('login-error');
+  const errorTxt = document.getElementById('login-error-text');
+
+  errorEl.classList.remove('show');
+
+  if (!email || !password) {
+    errorTxt.textContent = 'Please enter your email and password.';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle;"></span> Authenticating...';
+
+  try {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Invalid credentials. Please try again.');
+    }
+
+    // Store token
+    localStorage.setItem('adminToken', data.token);
+    localStorage.setItem('adminUser', JSON.stringify(data.user));
+    if (remember) {
+      localStorage.setItem('adminEmail', email);
+    }
+
+    // Check role
+    if (data.user && data.user.role !== 'admin') {
+      throw new Error('Access denied. Admin privileges required.');
+    }
+
+    btn.innerHTML = '✅ Login Successful! Redirecting...';
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 800);
+
+  } catch (err) {
+    errorTxt.textContent = err.message || 'Login failed. Please try again.';
+    errorEl.classList.add('show');
+
+    btn.disabled = false;
+    btn.innerHTML = '🔐 Sign In to Dashboard';
+  }
+});
+
+/* ─── Auto-fill remembered email ────────────────────────────── */
+(function checkRemembered() {
+  const savedEmail = localStorage.getItem('adminEmail');
+  if (savedEmail) {
+    document.getElementById('admin-email').value = savedEmail;
+    document.getElementById('remember-me').checked = true;
+    document.getElementById('admin-password').focus();
+  }
+})();
+
+/* ─── Redirect if already logged in ─────────────────────────── */
+(function checkAuth() {
+  const token = localStorage.getItem('adminToken');
+  if (token) {
+    window.location.href = 'dashboard.html';
+  }
+})();
+
+/* Spin keyframe via JS to keep it simple */
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(style);
+</script>
+</body>
+</html>
